@@ -1,0 +1,20 @@
+{
+  "manifest_version": 3,
+  "name": "Word Chad",
+  "version": "0.1.0",
+  "action":{
+    "default_popup": "index.html"
+  },
+  "description": "Ever wondered what a word means? Well wonder no longer",
+  "author": "chaseuelt@gmail.com",
+  "host_permissions":[
+    "http://*/*",
+    "https://*/*"
+  ],
+  "permissions":[
+    "scripting"
+  ],
+  "icons":{
+    "32": "wordchad.png"
+  }
+}
