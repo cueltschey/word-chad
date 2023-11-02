@@ -22,5 +22,8 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+<<<<<<< HEAD
 
+=======
+>>>>>>> 9050a7f7c048e88cee9ff79c116f7be4c93b5be1
 key.json
