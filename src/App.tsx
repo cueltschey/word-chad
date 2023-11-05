@@ -3,14 +3,14 @@ import './App.css'
 import key from '../key.json'
 
 const App = () => {
-  const [highlightedText, setHighlightedText] = useState('humiliating');
+  const [highlightedText, setHighlightedText] = useState('');
 
 
   const apiUrl = `https://www.dictionaryapi.com/api/v3/references/collegiate/json/${highlightedText}?key=${key.keys[0]}`;
   const [isValid, setIsValid] = useState(true)
   const [pronounciation, setPronounciation] = useState("")
-  let definitions: string[] = [] 
-  let usages: string[] = []
+  const [definitions, setDefinitions] = useState([""])
+  const [usages, setUsages] = useState([""])
 
   function getData(){
     console.log("fetching")
@@ -19,20 +19,15 @@ const App = () => {
       .then(data => {
         if (Array.isArray(data) && data.length > 0) {
           setPronounciation(data[0].hwi.prs[0].mw);
-          const results = data[0].shortdef;
-           for(var definitionObject in results){
-            definitions.push(definitionObject);
-            }
-          for(var usageObject in results){
-            usages.push(usageObject);
-            }
+          setDefinitions(data[0].shortdef)
+          setUsages(data[0].meta.stems)
           if(usages.length < 1 || definitions.length < 1) setIsValid(false)
         } else {
           setIsValid(false)
         }
       })
       .catch(error => {
-        console.error('Error fetching pronunciation:', error);
+        console.error(error);
         setIsValid(false)
       });
   }
@@ -55,7 +50,7 @@ const App = () => {
         } else {
           let text : string | undefined = result[0].result
           if(text) setHighlightedText(text);
-          getData()
+          if(highlightedText != "") getData();
         }
       });
     };
@@ -71,13 +66,9 @@ const App = () => {
         console.error("Unable to retrieve the current tab.");
       }
     });
-  }catch(error){console.error("must have highlighted text"), setIsValid(false)}}, []); 
+  }catch(error){console.error("must have highlighted text"), setIsValid(false), getData()}}, []); 
 
 
-  //testing
-  getData()
-  console.log(definitions)
-  console.log(usages)
   return (
   <div className="main">
       {isValid? <div></div> : <div className='errormsg'>Error: word not found</div>}
