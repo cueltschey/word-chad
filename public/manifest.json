@@ -5,14 +5,15 @@
   "action":{
     "default_popup": "index.html"
   },
-  "description": "This is a simple chrome extension that can automatically look up words. The goal in making this was to avoid the overcomplication common in dictionary chrome extensions. Word Chad has a simple UI and an intuitive usage that will make your looking up words much simpler.",
+  "description": "This is a simple chrome extension that can automatically look up words.", 
   "author": "chaseuelt@gmail.com",
   "host_permissions":[
     "http://*/*",
     "https://*/*"
   ],
   "permissions":[
-    "scripting"
+    "scripting",
+    "activeTab"
   ],
   "icons":{
     "16":"wordchad.png",

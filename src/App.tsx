@@ -3,17 +3,37 @@ import './App.css'
 import key from '../key.json'
 
 const App = () => {
-  const [highlightedText, setHighlightedText] = useState('');
-
-
-  const apiUrl = `https://www.dictionaryapi.com/api/v3/references/collegiate/json/${highlightedText}?key=${key.keys[0]}`;
+  const [highlightedText, setHighlightedText] = useState("");
   const [isValid, setIsValid] = useState(true)
   const [pronounciation, setPronounciation] = useState("")
   const [definitions, setDefinitions] = useState([""])
   const [usages, setUsages] = useState([""])
 
-  function getData(){
-    console.log("fetching")
+  useEffect(() => {
+    const getHighlightedText = (tab: any) => {
+      chrome.scripting.executeScript({
+        target: { tabId: tab.id },
+        func: () => {
+          if(window.getSelection()){
+            return window.getSelection()?.toString().split(" ")[0]
+          }
+          else{
+            return ""
+          }
+        },
+      },
+      (result) => {
+        let text : string | undefined = ""
+        if (chrome.runtime.lastError) {
+          console.error(chrome.runtime.lastError);
+        } else {
+          text = result[0].result
+          if(text != undefined){
+              setHighlightedText(text)
+              console.log(text)
+            }
+          const apiUrl = `https://www.dictionaryapi.com/api/v3/references/collegiate/json/${text}?key=${key.keys[0]}`;
+    console.log(highlightedText)
     fetch(apiUrl)
       .then(response => response.json())
       .then(data => {
@@ -30,27 +50,7 @@ const App = () => {
         console.error(error);
         setIsValid(false)
       });
-  }
-  useEffect(() => {
-    const getHighlightedText = (tab: any) => {
-      chrome.scripting.executeScript({
-        target: { tabId: tab.id },
-        func: () => {
-          if(window.getSelection()){
-            return window.getSelection()?.toString().split(" ")[0]
-          }
-          else{
-            return ""
-          }
-        },
-      },
-      (result) => {
-        if (chrome.runtime.lastError) {
-          console.error(chrome.runtime.lastError);
-        } else {
-          let text : string | undefined = result[0].result
-          if(text) setHighlightedText(text);
-          if(highlightedText != "") getData();
+
         }
       });
     };
@@ -66,7 +66,7 @@ const App = () => {
         console.error("Unable to retrieve the current tab.");
       }
     });
-  }catch(error){console.error("must have highlighted text"), setIsValid(false), getData()}}, []); 
+  }catch(error){console.error("must have highlighted text"), setIsValid(false)}}, []); 
 
 
   return (
@@ -83,7 +83,7 @@ const App = () => {
         ))}
       </div> 
       <div className='list'>
-        {usages.map((usage: string) => (
+        {usages.slice(0,5).map((usage: string) => (
           <li>{usage}</li>
         ))}
       </div>
